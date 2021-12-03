@@ -31,18 +31,17 @@ class Mariadb
         $numFields = $this->corelib->mysql_num_fields($result);
         var_dump($numFields);
         $row = $this->corelib->mysql_fetch_row($result);
-//
-//        $cdef = \FFI::cdef('
-//  int printf(const char **format, ...);
-//', 'libc.so');
+
+        $cdef = \FFI::cdef('
+  char * array_get(char** arr, int i);
+','libarrayworkaround.so');
 
         $i = 1;
         while ($row !== null) {
-            $addr = \FFI::addr($row);
-            $s = \FFI::cast('char *', $addr);
+            $s = $cdef->array_get($row, 0);
             $ss = \FFI::string($s);
             echo $i." ". $ss."\n" ;
-//            $cdef->printf($row);
+
             $i++;
             $row = $this->corelib->mysql_fetch_row($result);
         }

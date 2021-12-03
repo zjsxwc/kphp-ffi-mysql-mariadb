@@ -1,0 +1,1 @@
+extern char * array_get(char** arr, int i);

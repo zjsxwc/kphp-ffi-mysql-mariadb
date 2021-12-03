@@ -1,4 +1,4 @@
-//crc64:a9c8125a0d3a5a1c
+//crc64:7e43c10725a9cd1a
 //crc64_with_comments:0000000000000000
 #include "runtime-headers.h"
 #include "server/php-script.h"
@@ -22,10 +22,12 @@ char **get_runtime_options(int *count) noexcept {
 
 void global_init_php_scripts()  noexcept {
   const_vars_init();
-  ffi_env_instance = FFIEnv{1, 75};
+  ffi_env_instance = FFIEnv{2, 76};
   ffi_env_instance.funcs.dlopen = dlopen;
   ffi_env_instance.funcs.dlsym = dlsym;
-  ffi_env_instance.libs[0].path = "libmariadb.so";
+  ffi_env_instance.libs[0].path = "libarrayworkaround.so";
+  ffi_env_instance.libs[1].path = "libmariadb.so";
+  ffi_env_instance.symbols[75].name = "array_get";
   ffi_env_instance.symbols[0].name = "mysql_autocommit_cont";
   ffi_env_instance.symbols[1].name = "mysql_autocommit_start";
   ffi_env_instance.symbols[2].name = "mysql_change_user_cont";

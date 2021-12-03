@@ -1,7 +1,8 @@
-//crc64:705732ed92e359e3
-//crc64_with_comments:1237ddd2c8c7bc9f
+//crc64:2959de441444999a
+//crc64_with_comments:84ac7edb5b2f3b58
 #include "runtime-headers.h"
 #include "o_26/Zjsxwc@Mariadb@Mariadb@@test.h"
+#include "cl/C@scope@cdef@u62899a918cc5984a_0.h"
 #include "cl/C@scope@mariadb.h"
 extern string v$const_string$us127d4c5be47127fc;
 
@@ -17,6 +18,8 @@ extern string v$const_string$usb4258bb91cd13ab;
 
 extern string v$const_string$usba2bb85dba64384;
 
+extern string v$const_string$use92b47d43fad6c3a;
+
 extern string v$const_string$usf8e5e1651bd01df3;
 
 extern string v$const_string$usfa3590f20c4d7282;
@@ -26,7 +29,7 @@ extern string v$const_string$usff5c5a0e3e83b8f0;
 //source = [Mariadb.php]
 //14:     public function test() {
 void f$Zjsxwc$Mariadb$Mariadb$$test(class_instance<C$Zjsxwc$Mariadb$Mariadb> const &v$this) noexcept  {
-  CDataPtr<char**> v$addr;
+  class_instance<C$FFI$Scope> v$cdef;
   CDataPtr<struct ffi_mariadb_st_mysql> v$conn;
   int64_t v$i = 0;
   int64_t v$numFields = 0;
@@ -75,22 +78,29 @@ void f$Zjsxwc$Mariadb$Mariadb$$test(class_instance<C$Zjsxwc$Mariadb$Mariadb> con
   f$var_dump(v$numFields);
 //33:         $row = $this->corelib->mysql_fetch_row($result);
   v$row = ffi_c2php(FFI_CALL(reinterpret_cast<char** (*)(struct ffi_mariadb_st_mysql_res*)>(ffi_env_instance.symbols[13].ptr)(ffi_php2c(v$result, ffi_tag<C$FFI$CData<struct ffi_mariadb_st_mysql_res*>>{}))));
-//34: //
-//35: //        $cdef = \FFI::cdef('
-//36: //  int printf(const char **format, ...);
-//37: //', 'libc.so');
+//34: 
+//35:         $cdef = \FFI::cdef('
+  v$cdef = ({
+    ffi_load_scope_symbols(f$FFI$$load(v$const_string$us553e93901e462a6e), 0, 75, 1);
+    f$FFI$$scope(v$const_string$use92b47d43fad6c3a);
+  });
+//36:   char * array_get(char** arr, int i);
+//37: ', __DIR__.'/libarrayworkaround.so');
 //38: 
 //39:         $i = 1;
   v$i = 1_i64;
 //40:         while ($row !== null) {
   while (!!(!f$is_null(v$row))) {
-//41:             $addr = \FFI::addr($row);
-    v$addr = ffi_addr(check_not_null (v$row));
-//42:             $s = \FFI::cast('char *', $addr);
-    v$s = ffi_cast<char*>(v$addr);
+//41: 
+//42:             $s = $cdef->array_get($row, 0);
+    v$s = ffi_c2php(FFI_CALL(reinterpret_cast<char* (*)(char**, int32_t)>(ffi_env_instance.symbols[75].ptr)(ffi_php2c(check_not_null (v$row), ffi_tag<C$FFI$CData<char**>>{}), ffi_php2c(0_i64, ffi_tag<int32_t>{}))));
 //43:             $ss = \FFI::string($s);
     v$ss = f$FFI$$string(v$s);
-//44:             echo $i." ". $ss."\n " ;
+//44: 
+//45: //            $addr = \FFI::addr($row);
+//46: //            $s = \FFI::cast('char *', $addr);
+//47: //            $ss = \FFI::string($s);
+//48:             echo $i." ". $ss."\n " ;
     {
       f$echo(({
         const string &tmp_var0=v$ss;
@@ -99,20 +109,20 @@ void f$Zjsxwc$Mariadb$Mariadb$$test(class_instance<C$Zjsxwc$Mariadb$Mariadb> con
         tmp_string;
       }));
     };
-//45: //            $cdef->printf($row);
-//46:             $i++;
+//49: //            $cdef->printf($row);
+//50:             $i++;
     ++v$i;
-//47:             $row = $this->corelib->mysql_fetch_row($result);
+//51:             $row = $this->corelib->mysql_fetch_row($result);
     v$row = ffi_c2php(FFI_CALL(reinterpret_cast<char** (*)(struct ffi_mariadb_st_mysql_res*)>(ffi_env_instance.symbols[13].ptr)(ffi_php2c(v$result, ffi_tag<C$FFI$CData<struct ffi_mariadb_st_mysql_res*>>{}))));
   };
-//48:         }
-//49: 
-//50:         $this->corelib->mysql_free_result($result);
+//52:         }
+//53: 
+//54:         $this->corelib->mysql_free_result($result);
   FFI_CALL(reinterpret_cast<void (*)(struct ffi_mariadb_st_mysql_res*)>(ffi_env_instance.symbols[16].ptr)(ffi_php2c(v$result, ffi_tag<C$FFI$CData<struct ffi_mariadb_st_mysql_res*>>{})));
-//51:         $this->corelib->mysql_close($conn);
+//55:         $this->corelib->mysql_close($conn);
   FFI_CALL(reinterpret_cast<void (*)(struct ffi_mariadb_st_mysql*)>(ffi_env_instance.symbols[4].ptr)(ffi_php2c(v$conn, ffi_tag<C$FFI$CData<struct ffi_mariadb_st_mysql*>>{})));
-//52: 
-//53:         echo "OK";
+//56: 
+//57:         echo "OK";
   {
     f$echo(v$const_string$us127d4c5be47127fc);
   };
