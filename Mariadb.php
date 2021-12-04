@@ -7,12 +7,14 @@ use RuntimeException;
 class Mariadb
 {
     private static $corelibLoaded = false;
+
     private static function loadCoreLib()
     {
         if (self::$corelibLoaded) {
             return;
         }
         \FFI::load(__DIR__ . '/mariadb.h');
+        \FFI::load(__DIR__ . '/kphpworkaround.h');
         self::$corelibLoaded = true;
     }
 
@@ -79,10 +81,6 @@ class Mariadb
      */
     public function query(string $sql)
     {
-        $kphpworkaroundCdef = \FFI::cdef('
-          char * string_array_get(char** arr, int i);
-        ', 'libkphpworkaround.so');
-
         $this->connect();
 
         /** @var ffi_cdata<mariadb, struct st_mysql*> $conn */
@@ -102,7 +100,7 @@ class Mariadb
             /** @var string[] $rowstrArray */
             $rowstrArray = [];
             for ($j = 0; $j < $numFields; $j++) {
-                $cstr = $kphpworkaroundCdef->string_array_get($row, $j);
+                $cstr = $this->kphpworkaroundlib->string_array_get($row, $j);
                 $phpstr = \FFI::string($cstr);
                 $rowstrArray[] = $phpstr;
             }
@@ -124,5 +122,7 @@ class Mariadb
 
     /** @var ffi_scope<mariadb> */
     public $corelib = null;
+    /** @var ffi_scope<kphpworkaround> */
+    public $kphpworkaroundlib = null;
 
 }

@@ -1,5 +1,5 @@
-//crc64:c022d297b2d85a44
-//crc64_with_comments:526837e609b2d0f6
+//crc64:1db258c4bc21332a
+//crc64_with_comments:202ef06ab2a31457
 #include "runtime-headers.h"
 #include "o_64/src_mainead571f11daa89a8.h"
 #include "cl/C@Zjsxwc@Mariadb@Mariadb.h"
@@ -19,6 +19,8 @@ extern int64_t v$port;
 
 extern array< array< string > > v$r;
 
+extern array< array< string > > v$r2;
+
 extern bool v$src_mainead571f11daa89a8$called;
 
 extern string v$user;
@@ -34,7 +36,7 @@ extern string v$const_string$usf7d39e9f482ccd22;
 extern string v$const_string$usfa3590f20c4d7282;
 
 //source = [main.php]
-//9: require_once __DIR__."/Mariadb.php";
+//9: require_once __DIR__ . "/Mariadb.php";
 Optional < bool > f$src_mainead571f11daa89a8() noexcept  {
   v$src_mainead571f11daa89a8$called = true;
 //10: 
@@ -73,10 +75,14 @@ Optional < bool > f$src_mainead571f11daa89a8() noexcept  {
   TRY_CALL_VOID_ (f$Zjsxwc$Mariadb$Mariadb$$connect(f$make_clone(v$m)), return {});
 //28: $r = $m->query("SELECT * FROM `time_zone_name`");
   v$r = TRY_CALL_ (array< array< string > >, f$Zjsxwc$Mariadb$Mariadb$$query(f$make_clone(v$m), v$const_string$usf7d39e9f482ccd22), return {});
-//29: $m->closeConnection();
+//29: $r2 = $m->query("show databases");
+  v$r2 = TRY_CALL_ (array< array< string > >, f$Zjsxwc$Mariadb$Mariadb$$query(f$make_clone(v$m), v$const_string$us909365bfe47614c4), return {});
+//30: $m->closeConnection();
   f$Zjsxwc$Mariadb$Mariadb$$closeConnection(f$make_clone(v$m));
-//30: 
+//31: var_dump($r);
   f$var_dump(v$r);
+//32: 
+  f$var_dump(v$r2);
   return Optional<bool>{};
 }
 
