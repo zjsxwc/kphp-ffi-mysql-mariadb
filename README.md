@@ -4,13 +4,15 @@
 ```bash
 yay -S mariadb-clients
 
-gcc arrayworkaround.c  -fPIC -shared -o libarrayworkaround.so
-sudo cp ./libarrayworkaround.so /usr/lib/
+gcc kphpworkaround.c  -fPIC -shared -o libkphpworkaround.so
+sudo cp ./libkphpworkaround.so /usr/lib/
 ```
 
 #### compile
 
 ```bash
+docker run -ti -v ~/kphp-project/:/tmp/dev:rw vkcom/kphp
+cd /tmp/dev/kphp-ffi-mysql-mariadb
 kphp --enable-ffi  --mode cli main.php 
 ```
 
