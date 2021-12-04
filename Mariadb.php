@@ -19,21 +19,39 @@ class Mariadb
     }
 
 
+    /** @var string */
+    private $host;
+    /** @var string */
+    private $user;
+    /** @var string */
+    private $password;
+    /** @var string */
+    private $databaseName;
+    /** @var int */
+    private $port;
+
     /**
      * Mariadb constructor.
      * @throws RuntimeException
      */
-    public function __construct()
+    public function __construct(string $host, string $user, string $password, int $port = 3306, string $databaseName = "")
     {
         self::loadCoreLib();
         $this->corelib = \FFI::scope('mariadb');
+
+        $this->host = $host;
+        $this->user = $user;
+        $this->password = $password;
+        $this->port = $port;
+        $this->databaseName = $databaseName;
     }
 
 
     /**
+     * @return string[][]
      * @throws RuntimeException
      */
-    public function test()
+    public function query(string $sql)
     {
         $kphpworkaroundCdef = \FFI::cdef('
           char * string_array_get(char** arr, int i);
@@ -45,37 +63,37 @@ class Mariadb
             throw new RuntimeException(sprintf("Error mysql_init\n", $this->corelib->mysql_errno(null), $this->corelib->mysql_error(null)));
         }
 
-        $host = "192.168.33.77";
-        $user = "root";
-        $password = "root";
-        $port = 3306;
-        if (\FFI::isNull($this->corelib->mysql_real_connect($conn, $host, $user, $password, "", $port, "", 0))) {
+        if (\FFI::isNull($this->corelib->mysql_real_connect($conn, $this->host, $this->user, $this->password, $this->databaseName, $this->port, "", 0))) {
             throw new RuntimeException(sprintf("Error mysql_real_connect %u: %s\n", $this->corelib->mysql_errno($conn), $this->corelib->mysql_error($conn)));
         }
 
-        $sql = "show databases";
         if ($this->corelib->mysql_query($conn, $sql)) {
             throw new RuntimeException(sprintf("Error mysql_query %u: %s\n", $this->corelib->mysql_errno($conn), $this->corelib->mysql_error($conn)));
         }
         /** @var ffi_cdata<mariadb, struct MYSQL_RES*> $result */
         $result = $this->corelib->mysql_store_result($conn);
         $numFields = $this->corelib->mysql_num_fields($result);
-        var_dump($numFields);
 
         $row = $this->corelib->mysql_fetch_row($result);
-        /** @var string[] $resultArray */
+        /** @var string[][] $resultArray */
         $resultArray = [];
 
         while ($row !== null) {
-            $cstr = $kphpworkaroundCdef->string_array_get($row, 0);
-            $phpstr = \FFI::string($cstr);
-            $resultArray[] = $phpstr;
+            /** @var string[] $rowstrArray */
+            $rowstrArray = [];
+            for ($j = 0; $j < $numFields; $j++) {
+                $cstr = $kphpworkaroundCdef->string_array_get($row, $j);
+                $phpstr = \FFI::string($cstr);
+                $rowstrArray[] = $phpstr;
+            }
+            $resultArray[] = $rowstrArray;
             $row = $this->corelib->mysql_fetch_row($result);
         }
         $this->corelib->mysql_free_result($result);
-        var_dump($resultArray);
 
         $this->corelib->mysql_close($conn);
+
+        return $resultArray;
     }
 
     /** @var ffi_scope<mariadb> */
