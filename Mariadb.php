@@ -54,9 +54,9 @@ class Mariadb
      */
     private function initConnection()
     {
-        $mysqlip = $this->corelib->new('struct st_mysql *');
+        $ptr = $this->corelib->new('struct st_mysql *');
         /** @var ffi_cdata<mariadb, struct st_mysql*> $t */
-        $t = $this->corelib->mysql_init($mysqlip);
+        $t = $this->corelib->mysql_init($ptr);
         return $t;
     }
 
