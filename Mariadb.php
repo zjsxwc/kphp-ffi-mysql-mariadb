@@ -6,9 +6,7 @@ use RuntimeException;
 
 class Mariadb
 {
-
     private static $corelibLoaded = false;
-
     private static function loadCoreLib()
     {
         if (self::$corelibLoaded) {
@@ -17,7 +15,6 @@ class Mariadb
         \FFI::load(__DIR__ . '/mariadb.h');
         self::$corelibLoaded = true;
     }
-
 
     /** @var string */
     private $host;
@@ -46,6 +43,35 @@ class Mariadb
         $this->databaseName = $databaseName;
     }
 
+    /** @var ffi_cdata<mariadb, struct st_mysql*> */
+    private $_conn;
+    private $_isConnected = false;
+
+    /**
+     * @return ffi_cdata<mariadb, struct st_mysql*>
+     */
+    private function initConnection()
+    {
+        $mysqlip = $this->corelib->new('struct st_mysql *');
+        /** @var ffi_cdata<mariadb, struct st_mysql*> $t */
+        $t = $this->corelib->mysql_init($mysqlip);
+        return $t;
+    }
+
+    public function connect()
+    {
+        if ($this->_isConnected) {
+            return;
+        }
+        $this->_conn = $this->initConnection();
+        if (\FFI::isNull($this->_conn)) {
+            throw new RuntimeException(sprintf("Error mysql_init\n", $this->corelib->mysql_errno(null), $this->corelib->mysql_error(null)));
+        }
+        if (\FFI::isNull($this->corelib->mysql_real_connect($this->_conn, $this->host, $this->user, $this->password, $this->databaseName, $this->port, "", 0))) {
+            throw new RuntimeException(sprintf("Error mysql_real_connect %u: %s\n", $this->corelib->mysql_errno($this->_conn), $this->corelib->mysql_error($this->_conn)));
+        }
+        $this->_isConnected = true;
+    }
 
     /**
      * @return string[][]
@@ -57,16 +83,10 @@ class Mariadb
           char * string_array_get(char** arr, int i);
         ', 'libkphpworkaround.so');
 
-        /** @var ffi_cdata<mariadb, struct MYSQL*> $conn */
-        $conn = $this->corelib->mysql_init(null);
-        if (\FFI::isNull($conn)) {
-            throw new RuntimeException(sprintf("Error mysql_init\n", $this->corelib->mysql_errno(null), $this->corelib->mysql_error(null)));
-        }
+        $this->connect();
 
-        if (\FFI::isNull($this->corelib->mysql_real_connect($conn, $this->host, $this->user, $this->password, $this->databaseName, $this->port, "", 0))) {
-            throw new RuntimeException(sprintf("Error mysql_real_connect %u: %s\n", $this->corelib->mysql_errno($conn), $this->corelib->mysql_error($conn)));
-        }
-
+        /** @var ffi_cdata<mariadb, struct st_mysql*> $conn */
+        $conn = $this->_conn;
         if ($this->corelib->mysql_query($conn, $sql)) {
             throw new RuntimeException(sprintf("Error mysql_query %u: %s\n", $this->corelib->mysql_errno($conn), $this->corelib->mysql_error($conn)));
         }
@@ -91,9 +111,15 @@ class Mariadb
         }
         $this->corelib->mysql_free_result($result);
 
-        $this->corelib->mysql_close($conn);
-
         return $resultArray;
+    }
+
+    public function closeConnection()
+    {
+        if ($this->_isConnected) {
+            $this->corelib->mysql_close($this->_conn);
+            $this->_isConnected = false;
+        }
     }
 
     /** @var ffi_scope<mariadb> */

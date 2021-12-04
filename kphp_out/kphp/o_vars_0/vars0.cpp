@@ -1,4 +1,4 @@
-//crc64:ab6cd2383fa2728c
+//crc64:759d2b1e2b4b0293
 //crc64_with_comments:0000000000000000
 #include "runtime-headers.h"
 #include "cl/C@Zjsxwc@Mariadb@Mariadb.h"
@@ -24,7 +24,7 @@ string v$const_string$use86e45e8b5b927fe;
 string v$const_string$usf7d39e9f482ccd22;
 string v$const_string$usfa3590f20c4d7282;
 string v$const_var$u13aea9d82fb53914_0;
-string v$const_var$ub1748b6df09c2d0_0;
+string v$const_var$u2aa03d5b15825909_0;
 string v$d$PHP_SAPI;
 string v$dbName;
 string v$host;
@@ -56,8 +56,8 @@ void const_vars_init_priority_0_file_0() noexcept {
   v$const_string$usfa3590f20c4d7282.assign_raw (&raw[360]);
   v$const_var$u13aea9d82fb53914_0 = string (38, true).append_unsafe ("/tmp/dev/testffimysqlmariadb", 28).append_unsafe ("/mariadb.h", 10).finish_append();
   v$const_var$u13aea9d82fb53914_0.set_reference_counter_to(ExtraRefCnt::for_global_const);
-  v$const_var$ub1748b6df09c2d0_0 = string (17, true).append_unsafe ("Error mysql_init\n", 17).finish_append();
-  v$const_var$ub1748b6df09c2d0_0.set_reference_counter_to(ExtraRefCnt::for_global_const);
+  v$const_var$u2aa03d5b15825909_0 = string (17, true).append_unsafe ("Error mysql_init\n", 17).finish_append();
+  v$const_var$u2aa03d5b15825909_0.set_reference_counter_to(ExtraRefCnt::for_global_const);
 }
 
 void const_vars_init_priority_1_file_0() noexcept {
