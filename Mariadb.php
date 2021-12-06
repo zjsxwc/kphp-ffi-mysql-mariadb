@@ -37,6 +37,7 @@ class Mariadb
     {
         self::loadCoreLib();
         $this->corelib = \FFI::scope('mariadb');
+        $this->kphpworkaroundlib = \FFI::scope('kphpworkaround');
 
         $this->host = $host;
         $this->user = $user;
